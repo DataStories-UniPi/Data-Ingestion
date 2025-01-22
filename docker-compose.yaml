@@ -1,5 +1,6 @@
 services:
   postgres:
+    platform: linux/amd64
     image: postgres:15
     container_name: postgres_container
     ports:
@@ -11,9 +12,9 @@ services:
     volumes:
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
       - postgres_data:/var/lib/postgresql/data
-    restart: unless-stopped
     networks:
       - etl_network
+    restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER}"]
       interval: 10s
@@ -21,6 +22,7 @@ services:
       retries: 3
 
   etl:
+    platform: linux/amd64
     container_name: etl_container
     build:
       context: ./src
@@ -45,6 +47,7 @@ services:
     command: ["/app/scripts/etl_pipe.py"]
 
   pgadmin:
+    platform: linux/amd64
     image: dpage/pgadmin4
     container_name: pgadmin_container
     ports:
